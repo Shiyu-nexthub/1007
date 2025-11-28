@@ -2,6 +2,8 @@
 #include <stm32_hal_legacy.h>
 #include "FreeRTOS.h"
 #include "task.h"
+#include "spi.h"
+#include "can.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -73,6 +75,13 @@ int main(void)
 	HAL_Init();
 	SystemClock_Config();
 	LED_Init();
+	
+	// 初始化SPI2 (XV7001BB陀螺仪)
+	MX_SPI2_Init();
+	
+	// 初始化CAN1
+	MX_CAN_Init();
+	CAN_Driver_Init();
 
 	// 创建LED任务
 	xTaskCreate(Task_LED, "LED", 128, NULL, tskIDLE_PRIORITY + 1, NULL);
