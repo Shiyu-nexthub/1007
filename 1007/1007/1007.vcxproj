@@ -50,6 +50,9 @@
   <ItemGroup>
     <ClCompile Include="1007.cpp" />
     <ClCompile Include="system_stm32f1xx.c" />
+    <ClCompile Include="spi.c" />
+    <ClCompile Include="can.c" />
+    <ClCompile Include="xv7001bb.c" />
     <None Include="stm32.props" />
     <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\StartupFiles\startup_stm32f103xb.c" />
     <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal.c" />
@@ -111,6 +114,9 @@
     <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_usart.c" />
     <ClCompile Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Src\stm32f1xx_ll_utils.c" />
     <ClInclude Include="stm32f1xx_hal_conf.h" />
+    <ClInclude Include="spi.h" />
+    <ClInclude Include="can.h" />
+    <ClInclude Include="xv7001bb.h" />
     <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h" />
     <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h" />
     <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h" />
