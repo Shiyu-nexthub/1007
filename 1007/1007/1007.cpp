@@ -4,6 +4,8 @@
 #include "task.h"
 #include "spi.h"
 #include "can.h"
+#include "xv7001bb.h"
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -14,6 +16,14 @@ void vApplicationTickHook(void)
 {
 	HAL_IncTick();
 }
+
+/*============================================================================
+ * 调试变量 (放在extern "C"块内，确保调试器可见)
+ *============================================================================*/
+volatile float debug_gyro_dps = 0.0f;
+volatile float debug_temp_celsius = 0.0f;
+volatile uint8_t debug_status_raw = 0;
+volatile bool g_sensor_ready = false;
 
 #ifdef __cplusplus
 }
@@ -57,16 +67,101 @@ static void LED_Init(void)
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 }
 
-// LED闪烁任务
+/*============================================================================
+ * LED状态指示任务
+ * 慢闪 (500ms): 传感器正常
+ * 快闪 (50ms): 传感器异常/未就绪
+ *============================================================================*/
 static void Task_LED(void *argument)
 {
 	(void)argument;
-	const TickType_t xDelay = pdMS_TO_TICKS(500);  // 500ms
 	
 	for (;;)
 	{
 		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_9);
-		vTaskDelay(xDelay);
+		
+		if (g_sensor_ready)
+		{
+			vTaskDelay(pdMS_TO_TICKS(500));  // 慢闪
+		}
+		else
+		{
+			vTaskDelay(pdMS_TO_TICKS(50));   // 快闪
+		}
+	}
+}
+
+/*============================================================================
+ * 主任务 - 测试XV7001BB各接口功能
+ *============================================================================*/
+static void Task_Main(void *argument)
+{
+	(void)argument;
+	
+	XV7_Status status;
+	XV7_StatusReg statusReg;
+	XV7_GyroData gyroData;
+	XV7_TempData tempData;
+	
+	// 等待系统稳定
+	vTaskDelay(pdMS_TO_TICKS(100));
+	
+	//--------------------------------------------------
+	// 1. 初始化XV7001BB
+	//--------------------------------------------------
+	status = XV7001bb_Init();
+	if (status != XV7_OK)
+	{
+		// 初始化失败，保持快闪状态
+		g_sensor_ready = false;
+	}
+	else
+	{
+		g_sensor_ready = true;
+	}
+	
+	//--------------------------------------------------
+	// 2. 主循环 - 周期性测试各接口
+	//--------------------------------------------------
+	for (;;)
+	{
+		// 读取状态寄存器
+		status = XV7001bb_ReadStatus(&statusReg);
+		if (status == XV7_OK)
+		{
+			debug_status_raw = statusReg.raw;
+			
+			// 检查传感器是否就绪
+			if (statusReg.proc_ok && statusReg.state == XV7_STATE_SLEEP_OUT)
+			{
+				g_sensor_ready = true;
+				
+				// 读取角速度
+				status = XV7001bb_ReadAngle(&gyroData);
+				if (status == XV7_OK)
+				{
+					debug_gyro_dps = gyroData.dps;
+				}
+				
+				// 读取温度
+				status = XV7001bb_ReadTmp(&tempData);
+				if (status == XV7_OK)
+				{
+					debug_temp_celsius = tempData.celsius;
+				}
+			}
+			else
+			{
+				g_sensor_ready = false;
+			}
+		}
+		else
+		{
+			g_sensor_ready = false;
+		}
+		
+		// 5ms周期
+		vTaskDelay(pdMS_TO_TICKS(5));
 	}
 }
 
@@ -83,8 +178,11 @@ int main(void)
 	MX_CAN_Init();
 	CAN_Driver_Init();
 
-	// 创建LED任务
+	// 创建LED状态指示任务
 	xTaskCreate(Task_LED, "LED", 128, NULL, tskIDLE_PRIORITY + 1, NULL);
+	
+	// 创建主任务 (测试XV7001BB接口)
+	xTaskCreate(Task_Main, "Main", 512, NULL, tskIDLE_PRIORITY + 2, NULL);
 	
 	// 启动FreeRTOS调度器
 	vTaskStartScheduler();

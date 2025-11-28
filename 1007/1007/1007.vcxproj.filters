@@ -48,6 +48,15 @@
     <ClCompile Include="system_stm32f1xx.c">
       <Filter>Source files</Filter>
     </ClCompile>
+    <ClCompile Include="spi.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="can.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="xv7001bb.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
     <None Include="stm32.props">
       <Filter>Source files\Device-specific files</Filter>
     </None>
@@ -229,6 +238,15 @@
       <Filter>Source files\Device-specific files\LL</Filter>
     </ClCompile>
     <ClInclude Include="stm32f1xx_hal_conf.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="spi.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="can.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="xv7001bb.h">
       <Filter>Header files</Filter>
     </ClInclude>
     <ClInclude Include="$(BSP_ROOT)\STM32F1xxxx\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h">
