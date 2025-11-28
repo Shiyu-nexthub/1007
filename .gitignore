@@ -1,0 +1,27 @@
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.suo
+*.user
+
+# VisualGDB
+.visualgdb/
+VisualGDB/Debug/
+VisualGDB/Release/
+**/VisualGDB/Debug/
+**/VisualGDB/Release/
+*.vgdbsettings.*.user
+
+# Build outputs
+*.o
+*.obj
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+*.d
+
+# Backup files
+*.bak
+*~
