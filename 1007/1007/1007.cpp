@@ -42,7 +42,7 @@ void vApplicationTickHook(void)
  *============================================================================*/
 volatile float debug_gyro_dps = 0.0f;       // 原始角速度
 volatile float debug_corrected_dps = 0.0f;  // 校正后角速度
-volatile float debug_temp_celsius = 0.0f;   // 温度
+volatile float debug_temp_celsius = 25.0f;  // 温度
 volatile float debug_angle_deg = 0.0f;      // 积分角度
 volatile float debug_gyro_bias = 0.0f;      // 当前零偏
 volatile uint8_t debug_status_raw = 0;
@@ -52,7 +52,7 @@ volatile bool g_bias_ready = false;         // 零偏校准完成标志
 // 角度和校准数据 (供CAN任务访问)
 volatile float g_angle_deg = 0.0f;
 volatile float g_gyro_dps = 0.0f;
-volatile float g_temp_celsius = 0.0f;
+volatile float g_temp_celsius = 25.0f;
 volatile float g_gyro_bias_dps = 0.0f;
 
 // 命令标志
